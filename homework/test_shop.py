@@ -11,15 +11,11 @@ def product():
     return Product("book", 100, "This is a book", 1000)
 
 
-class TestProducts:
-    """
-    Тестовый класс - это способ группировки ваших тестов по какой-то тематике
-    Например, текущий класс группирует тесты на класс Product
-    """
+class TestProducts: #group by "products"
 
     def test_product_check_quantity(self, product):
         # TODO напишите проверки на метод check_quantity
-        pass
+        assert
 
     def test_product_buy(self, product):
         # TODO напишите проверки на метод buy

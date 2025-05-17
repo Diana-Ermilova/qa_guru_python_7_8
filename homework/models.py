@@ -1,3 +1,7 @@
+from distutils.command.check import check
+from socket import send_fds
+
+
 class Product:
     """
     Класс продукта
@@ -18,7 +22,7 @@ class Product:
         TODO Верните True если количество продукта больше или равно запрашиваемому
             и False в обратном случае
         """
-        raise NotImplementedError
+        return self.quantity >= quantity
 
     def buy(self, quantity):
         """
@@ -26,7 +30,9 @@ class Product:
             Проверьте количество продукта используя метод check_quantity
             Если продуктов не хватает, то выбросите исключение ValueError
         """
-        raise NotImplementedError
+        if not self.check_quantity(quantity):
+            raise ValueError
+        self.quantity -= quantity
 
     def __hash__(self):
         return hash(self.name + self.description)
@@ -37,7 +43,6 @@ class Cart:
     Класс корзины. В нем хранятся продукты, которые пользователь хочет купить.
     TODO реализуйте все методы класса
     """
-
     # Словарь продуктов и их количество в корзине
     products: dict[Product, int]
 
@@ -50,7 +55,11 @@ class Cart:
         Метод добавления продукта в корзину.
         Если продукт уже есть в корзине, то увеличиваем количество
         """
-        raise NotImplementedError
+        product.buy(buy_count)
+        if product not in self.products:
+            self.products[product] = buy_count
+        else:
+            self.products[product] += buy_count
 
     def remove_product(self, product: Product, remove_count=None):
         """
@@ -58,6 +67,26 @@ class Cart:
         Если remove_count не передан, то удаляется вся позиция
         Если remove_count больше, чем количество продуктов в позиции, то удаляется вся позиция
         """
+
+    #    if product not in self.products: #проверяем, что что-то в корзине вообще есть/нет
+    #       return
+    #
+    #    if remove_count is None or remove_count >= self.products[product]:
+    #        remove_count = self.products[product]
+    #        del self.products[product]
+    #    else:
+    #        self.products[product] -= remove_count
+    #
+    #    product.quantity += remove_count # return to product storage
+
+        if remove_count is None:
+            del self.products[product]  #если remove_count не передан
+        else:
+            if remove_count > self.products[product]: #если remove_count больше позиции
+                del  self.products[product]
+            else:
+                self.products[product] -= remove_count
+
         raise NotImplementedError
 
     def clear(self):
