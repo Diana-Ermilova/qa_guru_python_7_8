@@ -34,7 +34,7 @@ class Product:
             Если продуктов не хватает, то выбросите исключение ValueError
         """
         if not self.check_quantity(quantity):
-            raise ValueError
+            raise ValueError("Данного товара не хватает на складе")
         self.quantity -= quantity
 
     def __hash__(self):
@@ -70,18 +70,8 @@ class Cart:
         Если remove_count больше, чем количество продуктов в позиции, то удаляется вся позиция
         """
 
-    #    if product not in self.products: #проверяем, что что-то в корзине вообще есть/нет
-    #       return
-    #
-    #    if remove_count is None or remove_count >= self.products[product]:
-    #        remove_count = self.products[product]
-    #        del self.products[product]
-    #    else:
-    #        self.products[product] -= remove_count
-    #
-    #    product.quantity += remove_count # return to product storage
         if product not in self.products:
-            return
+            raise ValueError("Нельзя удалить несуществующий товар")
         if remove_count is None or remove_count > self.products[product]:
             del self.products[product]
         else:

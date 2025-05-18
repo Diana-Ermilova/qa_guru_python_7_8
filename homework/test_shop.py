@@ -57,7 +57,8 @@ class TestCart:
 
     def test_cart_remove_product(self, product):
         cart = Cart()
-        cart.remove_product(product)
+        with pytest.raises(ValueError):
+            cart.remove_product(product)
 
         cart.add_product(product, 200)
         cart.remove_product(product, 10)
