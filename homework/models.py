@@ -1,6 +1,9 @@
 from distutils.command.check import check
 from socket import send_fds
 
+from selenium.webdriver.common.devtools.v134.dom_storage import clear
+from urllib3 import proxy_from_url
+
 
 class Product:
     """
@@ -55,7 +58,6 @@ class Cart:
         Метод добавления продукта в корзину.
         Если продукт уже есть в корзине, то увеличиваем количество
         """
-        product.buy(buy_count)
         if product not in self.products:
             self.products[product] = buy_count
         else:
@@ -78,27 +80,31 @@ class Cart:
     #        self.products[product] -= remove_count
     #
     #    product.quantity += remove_count # return to product storage
-
-        if remove_count is None:
-            del self.products[product]  #если remove_count не передан
+        if product not in self.products:
+            return
+        if remove_count is None or remove_count > self.products[product]:
+            del self.products[product]
         else:
-            if remove_count > self.products[product]: #если remove_count больше позиции
-                del  self.products[product]
-            else:
-                self.products[product] -= remove_count
-
-        raise NotImplementedError
+            self.products[product] -= remove_count
 
     def clear(self):
-        raise NotImplementedError
+        self.products = {} #вернем товары на склад
 
-    def get_total_price(self) -> float:
-        raise NotImplementedError
+
+    def get_total_price(self) -> float: #считаем цену всей корзинки
+        result_price = 0
+        for product in self.products:
+            result_price += self.products[product] * product.price
+        return result_price
+
+
 
     def buy(self):
+        for product in self.products:
+            product.buy(self.products[product])
+        self.clear()
         """
         Метод покупки.
         Учтите, что товаров может не хватать на складе.
         В этом случае нужно выбросить исключение ValueError
         """
-        raise NotImplementedError
